@@ -28,17 +28,17 @@ class _BottomNavbarState extends State<BottomNavbar> {
         ),
         extendBody: true,
         bottomNavigationBar: RollingBottomBar(
-          color: Colors.black,
+          color: Color(0xffe2ddd9),
           controller: _pageControlller,
           flat: true,
           useActiveColorByDefault: false,
           items: const [
             RollingBottomBarItem(Icons.home,
-                label: 'Home', activeColor: Colors.white),
+                label: 'Home', activeColor: Color(0xff8d7966)),
             RollingBottomBarItem(Icons.add,
-                label: 'Details', activeColor: Colors.white),
+                label: 'Details', activeColor: Color(0xff8d7966)),
             RollingBottomBarItem(Icons.area_chart_outlined,
-                label: 'Grafik', activeColor: Colors.white),
+                label: 'Grafik', activeColor: Color(0xff8d7966)),
           ],
           enableIconRotation: true,
           onTap: (index) {
