@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wheather/chart/chart.dart';
 
 class Grafik extends StatefulWidget {
   const Grafik({Key? key}) : super(key: key);
@@ -11,17 +12,7 @@ class _GrafikState extends State<Grafik> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: const Text("Grafik Page"),
-        ),
-        body: ListView(
-          children: [
-            const SizedBox(height: 50),
-          ],
-        ),
-      ),
+      home: Chart(),
     );
   }
 }

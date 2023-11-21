@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rolling_bottom_bar/rolling_bottom_bar.dart';
 import 'package:rolling_bottom_bar/rolling_bottom_bar_item.dart';
+import 'package:wheather/pages/details.dart';
 import 'package:wheather/pages/grafik.dart';
 import 'package:wheather/pages/home.dart';
 
@@ -22,7 +23,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
           controller: _pageControlller,
           children: const <Widget>[
             Home(),
-            //Grafik(),
+            Details(),
             Grafik(),
           ],
         ),
