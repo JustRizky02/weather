@@ -12,7 +12,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffd8c8b8),
+      backgroundColor: Color(0xff005bc5),
       body: SafeArea(
         child: Align(
           alignment: Alignment.topCenter,
@@ -84,7 +84,7 @@ class _HomeState extends State<Home> {
                         height: 170,
                         width: 80,
                         decoration: BoxDecoration(
-                          color: Color(0xff8d7966),
+                          color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Padding(
@@ -126,7 +126,7 @@ class _HomeState extends State<Home> {
                         height: 170,
                         width: 80,
                         decoration: BoxDecoration(
-                          color: Color(0xff8d7966),
+                          color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Padding(
@@ -168,7 +168,7 @@ class _HomeState extends State<Home> {
                         height: 170,
                         width: 80,
                         decoration: BoxDecoration(
-                          color: Color(0xff8d7966),
+                          color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Padding(
@@ -210,7 +210,7 @@ class _HomeState extends State<Home> {
                         height: 170,
                         width: 80,
                         decoration: BoxDecoration(
-                          color: Color(0xff8d7966),
+                          color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Padding(
@@ -252,7 +252,7 @@ class _HomeState extends State<Home> {
                         height: 170,
                         width: 80,
                         decoration: BoxDecoration(
-                          color: Color(0xff8d7966),
+                          color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Padding(
@@ -294,7 +294,7 @@ class _HomeState extends State<Home> {
                         height: 170,
                         width: 80,
                         decoration: BoxDecoration(
-                          color: Color(0xff8d7966),
+                          color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Padding(
@@ -336,7 +336,7 @@ class _HomeState extends State<Home> {
                         height: 170,
                         width: 80,
                         decoration: BoxDecoration(
-                          color: Color(0xff8d7966),
+                          color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Padding(
@@ -378,7 +378,7 @@ class _HomeState extends State<Home> {
                         height: 170,
                         width: 80,
                         decoration: BoxDecoration(
-                          color: Color(0xff8d7966),
+                          color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Padding(

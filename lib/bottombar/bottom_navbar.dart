@@ -34,11 +34,11 @@ class _BottomNavbarState extends State<BottomNavbar> {
           useActiveColorByDefault: false,
           items: const [
             RollingBottomBarItem(Icons.home,
-                label: 'Home', activeColor: Color(0xff8d7966)),
+                label: 'Home', activeColor: Color(0xff001449)),
             RollingBottomBarItem(Icons.add,
-                label: 'Details', activeColor: Color(0xff8d7966)),
+                label: 'Details', activeColor: Color(0xff001449)),
             RollingBottomBarItem(Icons.area_chart_outlined,
-                label: 'Grafik', activeColor: Color(0xff8d7966)),
+                label: 'Grafik', activeColor: Color(0xff001449)),
           ],
           enableIconRotation: true,
           onTap: (index) {
