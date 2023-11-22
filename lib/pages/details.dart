@@ -51,7 +51,7 @@ class _DetailsState extends State<Details> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 0.0, horizontal: 10.0),
+                            vertical: 0.0, horizontal: 5.0),
                         child: Container(
                           width: double.infinity,
                           height: 250.0,
