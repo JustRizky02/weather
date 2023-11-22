@@ -156,11 +156,52 @@ class _DetailsState extends State<Details> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
-                              width: 165.0,
-                              height: 165.0,
+                              width: 165.0, // Sesuaikan dengan kebutuhan Anda
+                              height: 165.0, // Sesuaikan dengan kebutuhan Anda
                               decoration: BoxDecoration(
                                 color: Color(0x66008080).withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Image.asset(
+                                          'lib/assets/icons8-windy-weather-35.png',
+                                          width: 35,
+                                          height: 35,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 15.0, right: 10.0),
+                                        child: Text(
+                                          'Kecepatan',
+                                          style: TextStyle(
+                                              fontSize: 18.0,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10.0),
+                                    child: Text(
+                                      '34Km/jam',
+                                      style: TextStyle(
+                                          fontSize: 16.0, color: Colors.white),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             SizedBox(width: 20),
