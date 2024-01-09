@@ -1,5 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mqtt_client/mqtt_client.dart';
+import 'package:mqtt_client/mqtt_server_client.dart';
+
+class MqttManager {
+  MqttServerClient? _client;
+
+  MqttManager() {
+    _client = MqttServerClient('192.168.1.17', 'local');
+    _client?.port = 1883;
+    _client?.logging(on: false);
+    _client?.keepAlivePeriod = 60;
+    _client?.onDisconnected = _onDisconnected;
+    _client?.onSubscribed = _onSubscribed;
+  }
+
+  Future<void> connect() async {
+    try {
+      await _client?.connect();
+      print('Connected to MQTT');
+      _subscribeToTopic('suhu');
+    } catch (e) {
+      print('Error connecting to MQTT: $e');
+    }
+  }
+
+  void _onDisconnected() {
+    print('Disconnected from MQTT');
+    // Don't call connect() here to prevent adding events after closing.
+    // Instead, handle reconnection in your UI or other appropriate place.
+  }
+
+  void _onSubscribed(String topic) {
+    print('Subscribed to topic: $topic');
+  }
+
+  void _subscribeToTopic(String topic) {
+    _client?.subscribe(topic, MqttQos.atMostOnce);
+  }
+
+  void disconnect() {
+    _client?.disconnect();
+    _client?.unsubscribe('suhu');
+    // Add any other necessary cleanup or handling here.
+  }
+
+  void dispose() {
+    disconnect();
+    _client?.disconnect();
+    _client = null;
+  }
+}
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -9,6 +60,51 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String currentTemperature = '';
+  MqttManager mqttManager = MqttManager();
+
+  getData() async {
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+    try {
+      mqttManager.connect();
+      _subscribeToMqttMessages();
+    } catch (e) {
+      print('Error in initState: $e');
+    }
+  }
+
+  void _subscribeToMqttMessages() {
+    mqttManager._client?.updates
+        ?.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      final MqttPublishMessage message = c[0].payload as MqttPublishMessage;
+      final String payload =
+          MqttPublishPayload.bytesToStringAsString(message.payload.message);
+      if (c[0].topic == 'suhu') {
+        // Parse nilai string menjadi double
+        double temperatureValue = double.parse(payload);
+
+        // Format nilai double tanpa angka di belakang koma
+        String formattedTemperature = temperatureValue.toStringAsFixed(0);
+
+        setState(() {
+          currentTemperature = '$formattedTemperature °C';
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    mqttManager.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,16 +125,16 @@ class _HomeState extends State<Home> {
                 Stack(
                   children: [
                     Text(
-                      '25℃',
-                      style: TextStyle(
+                      currentTemperature,
+                      style: const TextStyle(
                           fontSize: 70,
                           color: Colors.white,
                           fontWeight: FontWeight.bold),
                     ),
-                    Opacity(
+                    const Opacity(
                       opacity: 0.7,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 60.0, top: 35.0),
+                        padding: EdgeInsets.only(left: 60.0, top: 35.0),
                         child: Image(
                             height: 100,
                             image: AssetImage(
@@ -87,13 +183,13 @@ class _HomeState extends State<Home> {
                           color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
+                        child: const Padding(
+                          padding: EdgeInsets.only(
                               top: 18, bottom: 12, right: 8, left: 8),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            children: const [
+                            children: [
                               Center(
                                 child: Text('10 AM',
                                     style: TextStyle(
@@ -129,13 +225,13 @@ class _HomeState extends State<Home> {
                           color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
+                        child: const Padding(
+                          padding: EdgeInsets.only(
                               top: 18, bottom: 12, right: 8, left: 8),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            children: const [
+                            children: [
                               Center(
                                 child: Text('11 AM',
                                     style: TextStyle(
@@ -171,13 +267,13 @@ class _HomeState extends State<Home> {
                           color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
+                        child: const Padding(
+                          padding: EdgeInsets.only(
                               top: 18, bottom: 12, right: 8, left: 8),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            children: const [
+                            children: [
                               Center(
                                 child: Text('12 AM',
                                     style: TextStyle(
@@ -213,13 +309,13 @@ class _HomeState extends State<Home> {
                           color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
+                        child: const Padding(
+                          padding: EdgeInsets.only(
                               top: 18, bottom: 12, right: 8, left: 8),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            children: const [
+                            children: [
                               Center(
                                 child: Text('13 AM',
                                     style: TextStyle(
@@ -255,13 +351,13 @@ class _HomeState extends State<Home> {
                           color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
+                        child: const Padding(
+                          padding: EdgeInsets.only(
                               top: 18, bottom: 12, right: 8, left: 8),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            children: const [
+                            children: [
                               Center(
                                 child: Text('14 AM',
                                     style: TextStyle(
@@ -297,13 +393,13 @@ class _HomeState extends State<Home> {
                           color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
+                        child: const Padding(
+                          padding: EdgeInsets.only(
                               top: 18, bottom: 12, right: 8, left: 8),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            children: const [
+                            children: [
                               Center(
                                 child: Text('15 AM',
                                     style: TextStyle(
@@ -339,13 +435,13 @@ class _HomeState extends State<Home> {
                           color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
+                        child: const Padding(
+                          padding: EdgeInsets.only(
                               top: 18, bottom: 12, right: 8, left: 8),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            children: const [
+                            children: [
                               Center(
                                 child: Text('16 AM',
                                     style: TextStyle(
@@ -381,13 +477,13 @@ class _HomeState extends State<Home> {
                           color: Color(0xff001449),
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
+                        child: const Padding(
+                          padding: EdgeInsets.only(
                               top: 18, bottom: 12, right: 8, left: 8),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            children: const [
+                            children: [
                               Center(
                                 child: Text('17 AM',
                                     style: TextStyle(

@@ -1,5 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mqtt_client/mqtt_client.dart';
+import 'package:mqtt_client/mqtt_server_client.dart';
+
+class MqttManager {
+  MqttServerClient? _client;
+
+  MqttManager() {
+    _client = MqttServerClient('192.168.1.17', 'local');
+    _client?.port = 1883;
+    _client?.logging(on: false);
+    _client?.keepAlivePeriod = 60;
+    _client?.onDisconnected = _onDisconnected;
+    _client?.onSubscribed = _onSubscribed;
+  }
+
+  Future<void> connect() async {
+    try {
+      await _client?.connect();
+      print('Connected to MQTT');
+      _subscribeToTopic('suhu');
+      _subscribeToTopic('cuaca');
+    } catch (e) {
+      print('Error connecting to MQTT: $e');
+    }
+  }
+
+  void _onDisconnected() {
+    print('Disconnected from MQTT');
+    // Don't call connect() here to prevent adding events after closing.
+    // Instead, handle reconnection in your UI or other appropriate place.
+  }
+
+  void _onSubscribed(String topic) {
+    print('Subscribed to topic: $topic');
+  }
+
+  void _subscribeToTopic(String topic) {
+    _client?.subscribe(topic, MqttQos.atMostOnce);
+  }
+
+  void disconnect() {
+    _client?.disconnect();
+    _client?.unsubscribe('suhu');
+    _client?.unsubscribe('cuaca');
+    // Add any other necessary cleanup or handling here.
+  }
+
+  void dispose() {
+    disconnect();
+    _client?.disconnect();
+    _client = null;
+  }
+}
 
 class Details extends StatefulWidget {
   const Details({Key? key}) : super(key: key);
@@ -9,6 +62,56 @@ class Details extends StatefulWidget {
 }
 
 class _DetailsState extends State<Details> {
+  String currentTemperature = '';
+  String currentcuaca = '';
+  MqttManager mqttManager = MqttManager();
+
+  getData() async {
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+    try {
+      mqttManager.connect();
+      _subscribeToMqttMessages();
+    } catch (e) {
+      print('Error in initState: $e');
+    }
+  }
+
+  void _subscribeToMqttMessages() {
+    mqttManager._client?.updates
+        ?.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      final MqttPublishMessage message = c[0].payload as MqttPublishMessage;
+      final String payload =
+          MqttPublishPayload.bytesToStringAsString(message.payload.message);
+      if (c[0].topic == 'suhu') {
+        // Parse nilai string menjadi double
+        double temperatureValue = double.parse(payload);
+
+        // Format nilai double tanpa angka di belakang koma
+        String formattedTemperature = temperatureValue.toStringAsFixed(0);
+
+        setState(() {
+          currentTemperature = '$formattedTemperature °C';
+        });
+      } else if (c[0].topic == 'cuaca') {
+        setState(() {
+          currentcuaca = payload;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    mqttManager.disconnect();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +137,7 @@ class _DetailsState extends State<Details> {
                       ),
                       children: [
                         TextSpan(
-                          text: '\n26℃ || Mostly Clear',
+                          text: currentTemperature,
                           style: GoogleFonts.inter(
                             fontSize: 22,
                             color: Colors.grey.shade400,
@@ -272,7 +375,7 @@ class _DetailsState extends State<Details> {
                                       child: Text(
                                         'Kecepatan',
                                         style: TextStyle(
-                                            fontSize: 18.0,
+                                            fontSize: 15.0,
                                             color: Colors.white),
                                       ),
                                     ),
@@ -323,7 +426,7 @@ class _DetailsState extends State<Details> {
                                       child: Text(
                                         'Arah Angin',
                                         style: TextStyle(
-                                            fontSize: 18.0,
+                                            fontSize: 15.0,
                                             color: Colors.white),
                                       ),
                                     ),
@@ -379,18 +482,18 @@ class _DetailsState extends State<Details> {
                                       child: Text(
                                         'Curah Hujan',
                                         style: TextStyle(
-                                            fontSize: 18.0,
+                                            fontSize: 15.0,
                                             color: Colors.white),
                                       ),
                                     ),
                                   ],
                                 ),
-                                const Padding(
+                                Padding(
                                   padding:
                                       EdgeInsets.symmetric(horizontal: 10.0),
                                   child: Text(
-                                    'Deras',
-                                    style: TextStyle(
+                                    currentcuaca,
+                                    style: const TextStyle(
                                         fontSize: 25,
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold),
@@ -430,21 +533,22 @@ class _DetailsState extends State<Details> {
                                       child: Text(
                                         'Suhu',
                                         style: TextStyle(
-                                            fontSize: 18.0,
+                                            fontSize: 15.0,
                                             color: Colors.white),
                                       ),
                                     ),
                                   ],
                                 ),
-                                const Padding(
+                                Padding(
                                   padding:
                                       EdgeInsets.symmetric(horizontal: 10.0),
                                   child: Text(
-                                    '25℃',
+                                    currentTemperature,
                                     style: TextStyle(
-                                        fontSize: 25,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
+                                      fontSize: 25,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],
